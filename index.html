@@ -3,141 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>標語圖產生器</title>
+  <title>台電 LOGO 迷因產生器</title>
   <style>
     * { box-sizing: border-box; }
+    :root {
+      --ink: #081f55;
+      --red: #b40013;
+      --paper: #fbfaf7;
+      --panel: #19191c;
+    }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      background: #111;
+      background: #101012;
       color: #f5f5f5;
     }
     .app {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 400px 1fr;
-      gap: 24px;
-      padding: 24px;
+      grid-template-columns: 390px 1fr;
+      gap: 20px;
+      padding: 20px;
     }
     .panel {
-      background: #1d1d1f;
-      border: 1px solid #333;
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      background: var(--panel);
+      border: 1px solid #323238;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .28);
     }
-    h1 { margin: 0 0 8px; font-size: 24px; letter-spacing: .04em; }
-    .hint { margin: 0 0 18px; color: #aaa; font-size: 14px; line-height: 1.6; }
-    label { display: block; margin: 15px 0 8px; color: #ddd; font-size: 14px; font-weight: 700; }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+    .hint {
+      margin: 0 0 16px;
+      color: #b8b8bd;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      color: #e6e6e8;
+      font-size: 14px;
+      font-weight: 800;
+    }
     textarea, input, select {
       width: 100%;
-      border: 1px solid #444;
-      border-radius: 14px;
-      padding: 12px 14px;
-      background: #111;
+      border: 1px solid #44444c;
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: #101012;
       color: #fff;
       font-size: 15px;
       outline: none;
     }
-    textarea { min-height: 86px; resize: vertical; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    textarea { min-height: 74px; resize: vertical; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
     button {
       width: 100%;
-      margin-top: 18px;
+      margin-top: 14px;
       border: 0;
-      border-radius: 16px;
-      padding: 14px 18px;
+      border-radius: 8px;
+      padding: 13px 16px;
       background: #fff;
       color: #111;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       cursor: pointer;
     }
-    button.secondary { margin-top: 10px; background: #2b2b2f; color: #fff; border: 1px solid #444; }
+    button.secondary {
+      margin-top: 9px;
+      background: #2c2c32;
+      color: #fff;
+      border: 1px solid #4a4a52;
+    }
     .preview-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: calc(100vh - 48px);
-      background: radial-gradient(circle at center, #222 0%, #080808 70%);
-      border-radius: 24px;
+      min-height: calc(100vh - 40px);
+      background: #080808;
+      border: 1px solid #25252a;
+      border-radius: 12px;
       overflow: auto;
-      padding: 30px;
+      padding: 24px;
     }
-    canvas { max-width: 100%; height: auto; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
-    .note { margin-top: 14px; color: #888; font-size: 12px; line-height: 1.6; }
-    @media (max-width: 900px) {
-      .app { grid-template-columns: 1fr; padding: 14px; }
-      .preview-wrap { min-height: auto; }
+    canvas {
+      max-width: 100%;
+      height: auto;
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .5);
+    }
+    .note {
+      margin-top: 12px;
+      color: #8f8f96;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    @media (max-width: 960px) {
+      .app { grid-template-columns: 1fr; padding: 12px; }
+      .preview-wrap { min-height: auto; padding: 12px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
     <section class="panel">
-      <h1>標語圖產生器</h1>
-      <p class="hint">輸入中文主標與英文副標，即可產生白底標語圖。左側圖示可自動依照文字意旨切換，也可自行上傳圖片。</p>
+      <h1>台電 LOGO 迷因產生器</h1>
+      <p class="hint">做出左側台電迷因圈、紅色電力圖、右側大字標語的仿公部門宣導圖。按隨機可以直接抽一組不太正經的標語。</p>
 
       <label>中文主標</label>
-      <textarea id="title">支持 1.25 兆軍購</textarea>
+      <textarea id="title">停電不是問題 冷氣才是信仰</textarea>
 
       <label>英文副標</label>
-      <textarea id="subtitle">SUPPORT 1.25 TRILLION IN MILITARY PURCHASES</textarea>
+      <textarea id="subtitle">POWER MAY FLICKER. THE AC MUST REMAIN.</textarea>
 
       <div class="row">
         <div>
           <label>版型比例</label>
           <select id="ratio">
+            <option value="wide">寬版宣導圖</option>
             <option value="16:9">16:9 橫式</option>
-            <option value="4:3">4:3 橫式</option>
             <option value="1:1">1:1 方形</option>
             <option value="9:16">9:16 直式</option>
           </select>
         </div>
         <div>
-          <label>左側圖示模式</label>
+          <label>徽章主題</label>
           <select id="iconMode">
             <option value="auto">依文字自動判斷</option>
-            <option value="drone">無人機</option>
-            <option value="defense">國防軍購</option>
-            <option value="electric">電力能源</option>
-            <option value="industry">產業科技</option>
+            <option value="plug">插頭鼠</option>
+            <option value="drone">軍購無人機</option>
+            <option value="ac">冷氣信仰</option>
+            <option value="bill">帳單爆擊</option>
             <option value="upload">使用上傳圖片</option>
           </select>
         </div>
       </div>
 
-      <label>字體風格</label>
-      <select id="fontStyle">
-        <option value="serif">明體／標語感</option>
-        <option value="sans">黑體／現代感</option>
-        <option value="kai">楷體／文宣感</option>
-        <option value="round">圓體／社群感</option>
-        <option value="mono">等寬／科技感</option>
-      </select>
+      <div class="row">
+        <div>
+          <label>黑字前段</label>
+          <input id="blackPart" value="停電不是問題" />
+        </div>
+        <div>
+          <label>紅字後段</label>
+          <input id="redPart" value="冷氣才是信仰" />
+        </div>
+      </div>
+
+      <label>外圈文字</label>
+      <input id="ringText" value="台電迷因圈 POWER MEME UNIT" />
 
       <div class="row">
         <div>
           <label>主字大小</label>
-          <input id="titleSize" type="number" value="92" min="40" max="180" />
+          <input id="titleSize" type="number" value="86" min="38" max="150" />
         </div>
         <div>
           <label>英文大小</label>
-          <input id="subSize" type="number" value="38" min="20" max="90" />
+          <input id="subSize" type="number" value="32" min="18" max="70" />
         </div>
       </div>
 
-      <label>自訂左側圖片（可不選）</label>
+      <label>自訂徽章中心圖片（可不選）</label>
       <input id="logoUpload" type="file" accept="image/*" />
 
+      <button id="randomBtn">隨機迷因</button>
       <button id="downloadBtn">下載 PNG</button>
-      <button class="secondary" id="resetBtn">恢復範例文字</button>
+      <button class="secondary" id="resetBtn">恢復範例</button>
 
-      <p class="note">說明：此版先用瀏覽器 Canvas 做「依文字意旨自動畫圖示」。若要真正 AI 生圖，可再接 OpenAI Images API、Replicate 或 Cloudflare Workers。</p>
+      <p class="note">這是戲仿迷因工具，不代表任何公司或機關。公開分享時，靠大家的幽默感自律。</p>
     </section>
 
     <section class="preview-wrap">
-      <canvas id="canvas" width="1600" height="900"></canvas>
+      <canvas id="canvas" width="1800" height="900"></canvas>
     </section>
   </main>
 
@@ -148,26 +195,79 @@
     const subtitleInput = document.getElementById('subtitle');
     const ratioInput = document.getElementById('ratio');
     const iconModeInput = document.getElementById('iconMode');
-    const fontStyleInput = document.getElementById('fontStyle');
+    const blackPartInput = document.getElementById('blackPart');
+    const redPartInput = document.getElementById('redPart');
+    const ringTextInput = document.getElementById('ringText');
     const titleSizeInput = document.getElementById('titleSize');
     const subSizeInput = document.getElementById('subSize');
     const uploadInput = document.getElementById('logoUpload');
     let uploadedLogo = null;
 
-    const fontMap = {
-      serif: '"Noto Serif TC", "Songti TC", "PMingLiU", serif',
-      sans: '"Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif',
-      kai: '"DFKai-SB", "KaiTi", "BiauKai", serif',
-      round: '"Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif',
-      mono: '"Roboto Mono", "SFMono-Regular", Consolas, "Noto Sans TC", monospace'
-    };
+    const ink = '#06265d';
+    const red = '#b00012';
+    const black = '#211816';
+    const paper = '#fbfaf7';
+
+    const presets = [
+      {
+        title: '停電不是問題 冷氣才是信仰',
+        blackPart: '停電不是問題',
+        redPart: '冷氣才是信仰',
+        subtitle: 'POWER MAY FLICKER. THE AC MUST REMAIN.',
+        icon: 'ac'
+      },
+      {
+        title: '電費帳單刻不容緩 薪水防線全面失守',
+        blackPart: '電費帳單刻不容緩',
+        redPart: '薪水防線全面失守',
+        subtitle: 'THE BILL HAS ARRIVED. EMOTIONAL DAMAGE IS CONFIRMED.',
+        icon: 'bill'
+      },
+      {
+        title: '鼠患防治刻不容緩 插頭安全你我有責',
+        blackPart: '鼠患防治刻不容緩',
+        redPart: '插頭安全你我有責',
+        subtitle: 'ACT NOW ON RODENT CONTROL. DO NOT LET THE PLUG BECOME A SNACK.',
+        icon: 'plug'
+      },
+      {
+        title: '支持 1.25 兆軍購 強化國防守護台灣',
+        blackPart: '支持 1.25 兆軍購',
+        redPart: '強化國防守護台灣',
+        subtitle: 'SUPPORT 1.25 TRILLION IN MILITARY PURCHASES. PROTECT TAIWAN.',
+        icon: 'drone'
+      },
+      {
+        title: '供電吃緊刻不容緩 先把冰箱門關好',
+        blackPart: '供電吃緊刻不容緩',
+        redPart: '先把冰箱門關好',
+        subtitle: 'GRID PRESSURE IS REAL. SO IS YOUR OPEN FRIDGE DOOR.',
+        icon: 'plug'
+      },
+      {
+        title: '電來了但耐心沒來 情緒修復刻不容緩',
+        blackPart: '電來了但耐心沒來',
+        redPart: '情緒修復刻不容緩',
+        subtitle: 'POWER RESTORED. INNER PEACE STILL UNDER MAINTENANCE.',
+        icon: 'bill'
+      }
+    ];
 
     function setCanvasRatio() {
       const ratio = ratioInput.value;
+      if (ratio === 'wide') { canvas.width = 1800; canvas.height = 900; }
       if (ratio === '16:9') { canvas.width = 1600; canvas.height = 900; }
-      if (ratio === '4:3') { canvas.width = 1400; canvas.height = 1050; }
       if (ratio === '1:1') { canvas.width = 1200; canvas.height = 1200; }
       if (ratio === '9:16') { canvas.width = 900; canvas.height = 1600; }
+    }
+
+    function detectTheme() {
+      const text = `${titleInput.value} ${subtitleInput.value}`.toLowerCase();
+      if (text.includes('軍購') || text.includes('國防') || text.includes('drone') || text.includes('military')) return 'drone';
+      if (text.includes('冷氣') || text.includes('ac') || text.includes('air')) return 'ac';
+      if (text.includes('電費') || text.includes('帳單') || text.includes('bill')) return 'bill';
+      if (text.includes('鼠') || text.includes('rodent') || text.includes('plug')) return 'plug';
+      return 'plug';
     }
 
     function roundRect(x, y, w, h, r) {
@@ -184,199 +284,334 @@
       ctx.closePath();
     }
 
-    function wrapText(text, x, y, maxWidth, lineHeight) {
-      const rawLines = text.split('\n');
-      let lines = [];
-      rawLines.forEach(raw => {
-        let line = '';
-        for (const char of raw) {
-          const test = line + char;
-          if (ctx.measureText(test).width > maxWidth && line) {
-            lines.push(line);
-            line = char;
-          } else {
-            line = test;
-          }
-        }
-        lines.push(line);
-      });
-      lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
-      return lines.length;
+    function drawBolt(x, y, size, angle = 0) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = red;
+      ctx.beginPath();
+      ctx.moveTo(size * -0.10, size * -0.50);
+      ctx.lineTo(size * 0.26, size * -0.12);
+      ctx.lineTo(size * 0.04, size * -0.08);
+      ctx.lineTo(size * 0.20, size * 0.50);
+      ctx.lineTo(size * -0.26, size * 0.05);
+      ctx.lineTo(size * -0.03, size * 0.01);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
     }
 
-    function detectTheme() {
-      const text = `${titleInput.value} ${subtitleInput.value}`.toLowerCase();
-      if (text.includes('無人機') || text.includes('drone') || text.includes('uav')) return 'drone';
-      if (text.includes('軍購') || text.includes('國防') || text.includes('戰場') || text.includes('military') || text.includes('defense')) return 'defense';
-      if (text.includes('台電') || text.includes('電') || text.includes('能源') || text.includes('power') || text.includes('energy')) return 'electric';
-      if (text.includes('產業') || text.includes('科技') || text.includes('晶片') || text.includes('industry') || text.includes('tech')) return 'industry';
-      return 'defense';
+    function drawRingText(cx, cy, radius, text) {
+      const chars = text.split('');
+      const start = Math.PI * 1.12;
+      const end = Math.PI * 1.88;
+      ctx.save();
+      ctx.fillStyle = ink;
+      ctx.font = `800 ${radius * 0.085}px "Noto Sans TC", "Microsoft JhengHei", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      chars.forEach((char, index) => {
+        const t = chars.length === 1 ? 0.5 : index / (chars.length - 1);
+        const a = start + (end - start) * t;
+        ctx.save();
+        ctx.translate(cx + Math.cos(a) * radius * 0.80, cy + Math.sin(a) * radius * 0.80);
+        ctx.rotate(a + Math.PI / 2);
+        ctx.fillText(char, 0, 0);
+        ctx.restore();
+      });
+      ctx.restore();
     }
 
     function drawBadgeBase(cx, cy, radius) {
       ctx.save();
-      ctx.strokeStyle = '#0d6f95';
-      ctx.lineWidth = radius * 0.045;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = radius * 0.022;
       for (let i = 0; i < 4; i++) {
         ctx.beginPath();
-        ctx.arc(cx, cy, radius - i * radius * 0.1, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius - i * radius * 0.045, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.lineWidth = radius * 0.011;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.68, 0, Math.PI * 2);
+      ctx.stroke();
+      drawRingText(cx, cy, radius, ringTextInput.value || '台電迷因圈 POWER MEME UNIT');
+      ctx.restore();
+    }
+
+    function drawPowerBolts(cx, cy, radius) {
+      const bolts = [
+        [-0.58, -0.22, -0.55],
+        [0.60, -0.12, 0.38],
+        [-0.34, 0.55, -0.95],
+        [0.35, 0.54, 0.62]
+      ];
+      bolts.forEach(([dx, dy, angle]) => drawBolt(cx + dx * radius, cy + dy * radius, radius * 0.30, angle));
+    }
+
+    function drawPlugMouse(cx, cy, r) {
+      ctx.save();
+      ctx.fillStyle = ink;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      ctx.beginPath();
+      ctx.ellipse(cx - r * .05, cy + r * .04, r * .38, r * .23, -0.18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx - r * .35, cy - r * .08, r * .16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx - r * .43, cy - r * .23, r * .08, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx - r * .27, cy - r * .25, r * .07, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx + r * .30, cy + r * .08);
+      ctx.bezierCurveTo(cx + r * .62, cy + r * .25, cx + r * .50, cy + r * .62, cx + r * .18, cy + r * .56);
+      ctx.stroke();
+      ctx.strokeStyle = paper;
+      ctx.lineWidth = r * 0.018;
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .50, cy - r * .06);
+      ctx.lineTo(cx - r * .70, cy - r * .10);
+      ctx.moveTo(cx - r * .50, cy - r * .02);
+      ctx.lineTo(cx - r * .72, cy + r * .04);
+      ctx.stroke();
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = r * 0.035;
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .26, cy + r * .24);
+      ctx.lineTo(cx - r * .26, cy + r * .52);
+      ctx.stroke();
+      ctx.fillRect(cx - r * .36, cy + r * .50, r * .20, r * .20);
+      ctx.restore();
+    }
+
+    function drawDrone(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.050;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .45, cy);
+      ctx.lineTo(cx + r * .45, cy);
+      ctx.moveTo(cx, cy - r * .28);
+      ctx.lineTo(cx, cy + r * .34);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, r * .19, r * .12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      [[-0.55,-0.20],[0.55,-0.20],[-0.55,0.28],[0.55,0.28]].forEach(([dx, dy]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx + r * dx, cy + r * dy, r * .18, r * .045, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.beginPath();
+      ctx.arc(cx, cy + r * .30, r * .11, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawAC(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      roundRect(cx - r * .48, cy - r * .36, r * .96, r * .34, r * .05);
+      ctx.stroke();
+      ctx.fillRect(cx - r * .38, cy - r * .20, r * .76, r * .06);
+      ctx.beginPath();
+      ctx.arc(cx + r * .33, cy - r * .26, r * .035, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = r * 0.030;
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(cx + i * r * .20, cy + r * .03);
+        ctx.bezierCurveTo(cx + i * r * .10, cy + r * .20, cx + i * r * .24, cy + r * .34, cx + i * r * .08, cy + r * .50);
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    function drawLightning(cx, cy, radius) {
+    function drawBill(cx, cy, r) {
       ctx.save();
-      ctx.fillStyle = '#d71920';
-      const bolts = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
-      bolts.forEach(a => {
-        ctx.save();
-        ctx.translate(cx + Math.cos(a) * radius * 0.63, cy + Math.sin(a) * radius * 0.63);
-        ctx.rotate(a);
-        ctx.beginPath();
-        ctx.moveTo(-radius * .06, -radius * .22);
-        ctx.lineTo(radius * .18, -radius * .04);
-        ctx.lineTo(radius * .04, -radius * .04);
-        ctx.lineTo(radius * .12, radius * .22);
-        ctx.lineTo(-radius * .18, radius * .02);
-        ctx.lineTo(-radius * .04, radius * .02);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      });
-      ctx.restore();
-    }
-
-    function drawDroneIcon(cx, cy, r) {
-      drawBadgeBase(cx, cy, r);
-      drawLightning(cx, cy, r);
-      ctx.save();
-      ctx.strokeStyle = '#0d6f95';
-      ctx.fillStyle = '#0d6f95';
-      ctx.lineWidth = r * 0.07;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(cx-r*.45, cy-r*.1); ctx.lineTo(cx+r*.45, cy-r*.1); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy-r*.38); ctx.lineTo(cx, cy+r*.28); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(cx, cy-r*.1, r*.16, r*.11, 0, 0, Math.PI*2); ctx.fill();
-      [[-0.55,-0.32],[0.55,-0.32],[-0.55,0.16],[0.55,0.16]].forEach(([dx,dy])=>{
-        ctx.beginPath(); ctx.ellipse(cx+r*dx, cy+r*dy, r*.18, r*.06, 0, 0, Math.PI*2); ctx.stroke();
-      });
-      ctx.restore();
-    }
-
-    function drawDefenseIcon(cx, cy, r) {
-      drawBadgeBase(cx, cy, r);
-      drawLightning(cx, cy, r);
-      ctx.save();
-      ctx.strokeStyle = '#0d6f95';
-      ctx.fillStyle = '#0d6f95';
-      ctx.lineWidth = r * 0.055;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy-r*.48);
-      ctx.lineTo(cx+r*.38, cy-r*.18);
-      ctx.lineTo(cx+r*.25, cy+r*.45);
-      ctx.lineTo(cx, cy+r*.62);
-      ctx.lineTo(cx-r*.25, cy+r*.45);
-      ctx.lineTo(cx-r*.38, cy-r*.18);
-      ctx.closePath();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      roundRect(cx - r * .33, cy - r * .48, r * .66, r * .88, r * .03);
       ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx-r*.22, cy-r*.06); ctx.lineTo(cx+r*.22, cy-r*.06); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy-r*.32); ctx.lineTo(cx, cy+r*.34); ctx.stroke();
+      ctx.font = `900 ${r * .20}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('$', cx, cy - r * .18);
+      ctx.lineWidth = r * 0.030;
+      [-0.02, 0.16, 0.32].forEach(dy => {
+        ctx.beginPath();
+        ctx.moveTo(cx - r * .21, cy + r * dy);
+        ctx.lineTo(cx + r * .21, cy + r * dy);
+        ctx.stroke();
+      });
+      drawBolt(cx + r * .38, cy + r * .30, r * .28, 0.3);
       ctx.restore();
     }
 
-    function drawElectricIcon(cx, cy, r) {
-      drawBadgeBase(cx, cy, r);
-      drawLightning(cx, cy, r);
+    function drawUploaded(cx, cy, r) {
       ctx.save();
-      ctx.strokeStyle = '#0d6f95';
-      ctx.fillStyle = '#0d6f95';
-      ctx.lineWidth = r * 0.06;
-      ctx.beginPath(); ctx.moveTo(cx-r*.38, cy+r*.42); ctx.lineTo(cx, cy-r*.48); ctx.lineTo(cx+r*.38, cy+r*.42); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx-r*.22, cy+r*.08); ctx.lineTo(cx+r*.22, cy+r*.08); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx-r*.12, cy+r*.3); ctx.lineTo(cx+r*.12, cy+r*.3); ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawIndustryIcon(cx, cy, r) {
-      drawBadgeBase(cx, cy, r);
-      drawLightning(cx, cy, r);
-      ctx.save();
-      ctx.strokeStyle = '#0d6f95';
-      ctx.fillStyle = '#0d6f95';
-      ctx.lineWidth = r * 0.055;
-      ctx.strokeRect(cx-r*.38, cy-r*.28, r*.76, r*.56);
-      for (let i=-2;i<=2;i++) {
-        ctx.beginPath(); ctx.moveTo(cx+i*r*.16, cy-r*.45); ctx.lineTo(cx+i*r*.16, cy-r*.28); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx+i*r*.16, cy+r*.28); ctx.lineTo(cx+i*r*.16, cy+r*.45); ctx.stroke();
-      }
-      for (let i=-1;i<=1;i++) {
-        ctx.beginPath(); ctx.moveTo(cx-r*.55, cy+i*r*.17); ctx.lineTo(cx-r*.38, cy+i*r*.17); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx+r*.38, cy+i*r*.17); ctx.lineTo(cx+r*.55, cy+i*r*.17); ctx.stroke();
-      }
-      ctx.fillRect(cx-r*.16, cy-r*.12, r*.32, r*.24);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * .60, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(uploadedLogo, cx - r * .60, cy - r * .60, r * 1.2, r * 1.2);
       ctx.restore();
     }
 
     function drawThemeIcon(cx, cy, r) {
+      drawBadgeBase(cx, cy, r);
+      drawPowerBolts(cx, cy, r);
       let mode = iconModeInput.value;
       if (mode === 'auto') mode = detectTheme();
-      if (mode === 'upload' && uploadedLogo) {
-        ctx.save();
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
-        ctx.drawImage(uploadedLogo, cx - r, cy - r, r * 2, r * 2);
-        ctx.restore();
-        return;
+      if (mode === 'upload' && uploadedLogo) drawUploaded(cx, cy, r);
+      else if (mode === 'drone') drawDrone(cx, cy, r * .78);
+      else if (mode === 'ac') drawAC(cx, cy, r * .78);
+      else if (mode === 'bill') drawBill(cx, cy, r * .78);
+      else drawPlugMouse(cx, cy, r * .78);
+    }
+
+    function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1) {
+      const fontFamily = '"Noto Sans TC", "Microsoft JhengHei", "Arial Black", sans-serif';
+      let fontSize = size;
+      const chunks = text.trim().split(/\s+/);
+      if (text.match(/[\u4e00-\u9fff]/)) {
+        chunks.length = 0;
+        for (const char of text.trim()) chunks.push(char);
       }
-      if (mode === 'drone') drawDroneIcon(cx, cy, r);
-      else if (mode === 'electric') drawElectricIcon(cx, cy, r);
-      else if (mode === 'industry') drawIndustryIcon(cx, cy, r);
-      else drawDefenseIcon(cx, cy, r);
+
+      function buildLines() {
+        ctx.font = `900 ${fontSize}px ${fontFamily}`;
+        const lines = [];
+        let line = '';
+        chunks.forEach(chunk => {
+          const candidate = text.match(/[\u4e00-\u9fff]/) ? line + chunk : `${line} ${chunk}`.trim();
+          if (ctx.measureText(candidate).width > maxWidth && line) {
+            lines.push(line);
+            line = chunk;
+          } else {
+            line = candidate;
+          }
+        });
+        if (line) lines.push(line);
+        return lines;
+      }
+
+      let lines = buildLines();
+      while ((lines.length > maxLines || lines.some(line => ctx.measureText(line).width > maxWidth)) && fontSize > 22) {
+        fontSize -= 2;
+        lines = buildLines();
+      }
+      ctx.fillStyle = color;
+      ctx.font = `900 ${fontSize}px ${fontFamily}`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      lines.slice(0, maxLines).forEach((line, index) => ctx.fillText(line, x, y + index * fontSize * 1.08));
+      return { fontSize, lineCount: Math.min(lines.length, maxLines), height: Math.min(lines.length, maxLines) * fontSize * 1.08 };
+    }
+
+    function drawDesktopLayout(w, h) {
+      const badgeR = h * 0.19;
+      const badgeCx = w * 0.13;
+      const badgeCy = h * 0.50;
+      drawThemeIcon(badgeCx, badgeCy, badgeR);
+
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.23, h * 0.26);
+      ctx.lineTo(w * 0.23, h * 0.74);
+      ctx.stroke();
+
+      const textX = w * 0.255;
+      const textY = h * 0.335;
+      const textW = w * 0.63;
+      const titleSize = Number(titleSizeInput.value);
+      const blackPart = blackPartInput.value || titleInput.value;
+      const redPart = redPartInput.value;
+
+      const blackResult = drawFitText(blackPart, textX, textY, textW * 0.52, titleSize, black, 1);
+      const redX = textX + Math.min(ctx.measureText(blackPart).width + titleSize * .28, textW * 0.55);
+      drawFitText(redPart, redX, textY, textW - (redX - textX), titleSize, red, 1);
+
+      const lineY = textY + blackResult.fontSize * 1.17;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(textX, lineY);
+      ctx.lineTo(textX + textW, lineY);
+      ctx.stroke();
+
+      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 1);
+      drawBolt(w * 0.94, h * 0.50, h * 0.18, 0.16);
+    }
+
+    function drawStackedLayout(w, h) {
+      const badgeR = Math.min(w, h) * 0.22;
+      const badgeCx = w * 0.50;
+      const badgeCy = h * 0.23;
+      drawThemeIcon(badgeCx, badgeCy, badgeR);
+
+      const textX = w * 0.11;
+      const textY = h * 0.49;
+      const textW = w * 0.78;
+      const titleSize = Number(titleSizeInput.value);
+
+      const blackResult = drawFitText(blackPartInput.value || titleInput.value, textX, textY, textW, titleSize, black, 2);
+      drawFitText(redPartInput.value, textX, textY + blackResult.height + h * 0.018, textW, titleSize, red, 2);
+
+      const lineY = textY + blackResult.height + titleSize * 1.22;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(textX, lineY);
+      ctx.lineTo(textX + textW, lineY);
+      ctx.stroke();
+      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 3);
+      drawBolt(w * 0.86, h * 0.88, Math.min(w, h) * 0.12, 0.2);
     }
 
     function draw() {
       setCanvasRatio();
-      const w = canvas.width, h = canvas.height;
+      const w = canvas.width;
+      const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = paper;
       ctx.fillRect(0, 0, w, h);
 
-      const margin = Math.min(w, h) * 0.07;
-      const cardX = margin;
-      const cardY = h * 0.16;
-      const cardW = w - margin * 2;
-      const cardH = h * 0.68;
-      const r = Math.min(w, h) * 0.06;
-
-      ctx.fillStyle = '#f7f7f4';
-      roundRect(cardX, cardY, cardW, cardH, r);
-      ctx.fill();
-
-      const isVertical = h > w;
-      const logoRadius = isVertical ? w * 0.18 : h * 0.19;
-      const logoCx = isVertical ? w / 2 : cardX + cardW * 0.17;
-      const logoCy = isVertical ? cardY + cardH * 0.23 : cardY + cardH * 0.5;
-      drawThemeIcon(logoCx, logoCy, logoRadius);
-
-      const textX = isVertical ? cardX + cardW * 0.1 : cardX + cardW * 0.32;
-      const textTop = isVertical ? cardY + cardH * 0.43 : cardY + cardH * 0.25;
-      const textW = isVertical ? cardW * 0.8 : cardW * 0.62;
-      const fontFamily = fontMap[fontStyleInput.value];
-
-      ctx.fillStyle = '#050505';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      ctx.font = `900 ${Number(titleSizeInput.value)}px ${fontFamily}`;
-      const titleLines = wrapText(titleInput.value, textX, textTop, textW, Number(titleSizeInput.value) * 1.18);
-
-      ctx.font = `900 ${Number(subSizeInput.value)}px Georgia, "Times New Roman", serif`;
-      const subY = textTop + titleLines * Number(titleSizeInput.value) * 1.18 + h * 0.035;
-      wrapText(subtitleInput.value.toUpperCase(), textX, subY, textW, Number(subSizeInput.value) * 1.25);
+      if (h > w || w < 1300) drawStackedLayout(w, h);
+      else drawDesktopLayout(w, h);
     }
 
-    [titleInput, subtitleInput, ratioInput, iconModeInput, fontStyleInput, titleSizeInput, subSizeInput].forEach(el => {
+    function syncTitleFromParts() {
+      titleInput.value = `${blackPartInput.value} ${redPartInput.value}`.trim();
+    }
+
+    function applyPreset(preset) {
+      titleInput.value = preset.title;
+      blackPartInput.value = preset.blackPart;
+      redPartInput.value = preset.redPart;
+      subtitleInput.value = preset.subtitle;
+      iconModeInput.value = preset.icon;
+      draw();
+    }
+
+    [titleInput, subtitleInput, ratioInput, iconModeInput, ringTextInput, titleSizeInput, subSizeInput].forEach(el => {
       el.addEventListener('input', draw);
       el.addEventListener('change', draw);
+    });
+    [blackPartInput, redPartInput].forEach(el => {
+      el.addEventListener('input', () => {
+        syncTitleFromParts();
+        draw();
+      });
     });
 
     uploadInput.addEventListener('change', e => {
@@ -385,30 +620,35 @@
       const reader = new FileReader();
       reader.onload = () => {
         uploadedLogo = new Image();
-        uploadedLogo.onload = () => { iconModeInput.value = 'upload'; draw(); };
+        uploadedLogo.onload = () => {
+          iconModeInput.value = 'upload';
+          draw();
+        };
         uploadedLogo.src = reader.result;
       };
       reader.readAsDataURL(file);
     });
 
+    document.getElementById('randomBtn').addEventListener('click', () => {
+      applyPreset(presets[Math.floor(Math.random() * presets.length)]);
+    });
+
     document.getElementById('downloadBtn').addEventListener('click', () => {
       draw();
       const link = document.createElement('a');
-      link.download = 'slogan-image.png';
+      link.download = 'taipower-logo-meme.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
-      titleInput.value = '支持 1.25 兆軍購';
-      subtitleInput.value = 'SUPPORT 1.25 TRILLION IN MILITARY PURCHASES';
-      iconModeInput.value = 'auto';
-      fontStyleInput.value = 'serif';
-      titleSizeInput.value = 92;
-      subSizeInput.value = 38;
+      ratioInput.value = 'wide';
+      ringTextInput.value = '台電迷因圈 POWER MEME UNIT';
+      titleSizeInput.value = 86;
+      subSizeInput.value = 32;
       uploadedLogo = null;
       uploadInput.value = '';
-      draw();
+      applyPreset(presets[0]);
     });
 
     draw();
