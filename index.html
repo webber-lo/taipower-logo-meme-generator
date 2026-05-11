@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>標語圖產生器</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #111;
+      color: #f5f5f5;
+    }
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 24px;
+      padding: 24px;
+    }
+    .panel {
+      background: #1d1d1f;
+      border: 1px solid #333;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    h1 { margin: 0 0 8px; font-size: 24px; letter-spacing: .04em; }
+    .hint { margin: 0 0 18px; color: #aaa; font-size: 14px; line-height: 1.6; }
+    label { display: block; margin: 15px 0 8px; color: #ddd; font-size: 14px; font-weight: 700; }
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid #444;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+    textarea { min-height: 86px; resize: vertical; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button {
+      width: 100%;
+      margin-top: 18px;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      background: #fff;
+      color: #111;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    button.secondary { margin-top: 10px; background: #2b2b2f; color: #fff; border: 1px solid #444; }
+    .preview-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 48px);
+      background: radial-gradient(circle at center, #222 0%, #080808 70%);
+      border-radius: 24px;
+      overflow: auto;
+      padding: 30px;
+    }
+    canvas { max-width: 100%; height: auto; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    .note { margin-top: 14px; color: #888; font-size: 12px; line-height: 1.6; }
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; padding: 14px; }
+      .preview-wrap { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="panel">
+      <h1>標語圖產生器</h1>
+      <p class="hint">輸入中文主標與英文副標，即可產生白底標語圖。左側圖示可自動依照文字意旨切換，也可自行上傳圖片。</p>
+
+      <label>中文主標</label>
+      <textarea id="title">支持 1.25 兆軍購</textarea>
+
+      <label>英文副標</label>
+      <textarea id="subtitle">SUPPORT 1.25 TRILLION IN MILITARY PURCHASES</textarea>
+
+      <div class="row">
+        <div>
+          <label>版型比例</label>
+          <select id="ratio">
+            <option value="16:9">16:9 橫式</option>
+            <option value="4:3">4:3 橫式</option>
+            <option value="1:1">1:1 方形</option>
+            <option value="9:16">9:16 直式</option>
+          </select>
+        </div>
+        <div>
+          <label>左側圖示模式</label>
+          <select id="iconMode">
+            <option value="auto">依文字自動判斷</option>
+            <option value="drone">無人機</option>
+            <option value="defense">國防軍購</option>
+            <option value="electric">電力能源</option>
+            <option value="industry">產業科技</option>
+            <option value="upload">使用上傳圖片</option>
+          </select>
+        </div>
+      </div>
+
+      <label>字體風格</label>
+      <select id="fontStyle">
+        <option value="serif">明體／標語感</option>
+        <option value="sans">黑體／現代感</option>
+        <option value="kai">楷體／文宣感</option>
+        <option value="round">圓體／社群感</option>
+        <option value="mono">等寬／科技感</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label>主字大小</label>
+          <input id="titleSize" type="number" value="92" min="40" max="180" />
+        </div>
+        <div>
+          <label>英文大小</label>
+          <input id="subSize" type="number" value="38" min="20" max="90" />
+        </div>
+      </div>
+
+      <label>自訂左側圖片（可不選）</label>
+      <input id="logoUpload" type="file" accept="image/*" />
+
+      <button id="downloadBtn">下載 PNG</button>
+      <button class="secondary" id="resetBtn">恢復範例文字</button>
+
+      <p class="note">說明：此版先用瀏覽器 Canvas 做「依文字意旨自動畫圖示」。若要真正 AI 生圖，可再接 OpenAI Images API、Replicate 或 Cloudflare Workers。</p>
+    </section>
+
+    <section class="preview-wrap">
+      <canvas id="canvas" width="1600" height="900"></canvas>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const titleInput = document.getElementById('title');
+    const subtitleInput = document.getElementById('subtitle');
+    const ratioInput = document.getElementById('ratio');
+    const iconModeInput = document.getElementById('iconMode');
+    const fontStyleInput = document.getElementById('fontStyle');
+    const titleSizeInput = document.getElementById('titleSize');
+    const subSizeInput = document.getElementById('subSize');
+    const uploadInput = document.getElementById('logoUpload');
+    let uploadedLogo = null;
+
+    const fontMap = {
+      serif: '"Noto Serif TC", "Songti TC", "PMingLiU", serif',
+      sans: '"Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif',
+      kai: '"DFKai-SB", "KaiTi", "BiauKai", serif',
+      round: '"Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif',
+      mono: '"Roboto Mono", "SFMono-Regular", Consolas, "Noto Sans TC", monospace'
+    };
+
+    function setCanvasRatio() {
+      const ratio = ratioInput.value;
+      if (ratio === '16:9') { canvas.width = 1600; canvas.height = 900; }
+      if (ratio === '4:3') { canvas.width = 1400; canvas.height = 1050; }
+      if (ratio === '1:1') { canvas.width = 1200; canvas.height = 1200; }
+      if (ratio === '9:16') { canvas.width = 900; canvas.height = 1600; }
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function wrapText(text, x, y, maxWidth, lineHeight) {
+      const rawLines = text.split('\n');
+      let lines = [];
+      rawLines.forEach(raw => {
+        let line = '';
+        for (const char of raw) {
+          const test = line + char;
+          if (ctx.measureText(test).width > maxWidth && line) {
+            lines.push(line);
+            line = char;
+          } else {
+            line = test;
+          }
+        }
+        lines.push(line);
+      });
+      lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
+      return lines.length;
+    }
+
+    function detectTheme() {
+      const text = `${titleInput.value} ${subtitleInput.value}`.toLowerCase();
+      if (text.includes('無人機') || text.includes('drone') || text.includes('uav')) return 'drone';
+      if (text.includes('軍購') || text.includes('國防') || text.includes('戰場') || text.includes('military') || text.includes('defense')) return 'defense';
+      if (text.includes('台電') || text.includes('電') || text.includes('能源') || text.includes('power') || text.includes('energy')) return 'electric';
+      if (text.includes('產業') || text.includes('科技') || text.includes('晶片') || text.includes('industry') || text.includes('tech')) return 'industry';
+      return 'defense';
+    }
+
+    function drawBadgeBase(cx, cy, radius) {
+      ctx.save();
+      ctx.strokeStyle = '#0d6f95';
+      ctx.lineWidth = radius * 0.045;
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius - i * radius * 0.1, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawLightning(cx, cy, radius) {
+      ctx.save();
+      ctx.fillStyle = '#d71920';
+      const bolts = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
+      bolts.forEach(a => {
+        ctx.save();
+        ctx.translate(cx + Math.cos(a) * radius * 0.63, cy + Math.sin(a) * radius * 0.63);
+        ctx.rotate(a);
+        ctx.beginPath();
+        ctx.moveTo(-radius * .06, -radius * .22);
+        ctx.lineTo(radius * .18, -radius * .04);
+        ctx.lineTo(radius * .04, -radius * .04);
+        ctx.lineTo(radius * .12, radius * .22);
+        ctx.lineTo(-radius * .18, radius * .02);
+        ctx.lineTo(-radius * .04, radius * .02);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      });
+      ctx.restore();
+    }
+
+    function drawDroneIcon(cx, cy, r) {
+      drawBadgeBase(cx, cy, r);
+      drawLightning(cx, cy, r);
+      ctx.save();
+      ctx.strokeStyle = '#0d6f95';
+      ctx.fillStyle = '#0d6f95';
+      ctx.lineWidth = r * 0.07;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(cx-r*.45, cy-r*.1); ctx.lineTo(cx+r*.45, cy-r*.1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy-r*.38); ctx.lineTo(cx, cy+r*.28); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(cx, cy-r*.1, r*.16, r*.11, 0, 0, Math.PI*2); ctx.fill();
+      [[-0.55,-0.32],[0.55,-0.32],[-0.55,0.16],[0.55,0.16]].forEach(([dx,dy])=>{
+        ctx.beginPath(); ctx.ellipse(cx+r*dx, cy+r*dy, r*.18, r*.06, 0, 0, Math.PI*2); ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function drawDefenseIcon(cx, cy, r) {
+      drawBadgeBase(cx, cy, r);
+      drawLightning(cx, cy, r);
+      ctx.save();
+      ctx.strokeStyle = '#0d6f95';
+      ctx.fillStyle = '#0d6f95';
+      ctx.lineWidth = r * 0.055;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy-r*.48);
+      ctx.lineTo(cx+r*.38, cy-r*.18);
+      ctx.lineTo(cx+r*.25, cy+r*.45);
+      ctx.lineTo(cx, cy+r*.62);
+      ctx.lineTo(cx-r*.25, cy+r*.45);
+      ctx.lineTo(cx-r*.38, cy-r*.18);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-r*.22, cy-r*.06); ctx.lineTo(cx+r*.22, cy-r*.06); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy-r*.32); ctx.lineTo(cx, cy+r*.34); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawElectricIcon(cx, cy, r) {
+      drawBadgeBase(cx, cy, r);
+      drawLightning(cx, cy, r);
+      ctx.save();
+      ctx.strokeStyle = '#0d6f95';
+      ctx.fillStyle = '#0d6f95';
+      ctx.lineWidth = r * 0.06;
+      ctx.beginPath(); ctx.moveTo(cx-r*.38, cy+r*.42); ctx.lineTo(cx, cy-r*.48); ctx.lineTo(cx+r*.38, cy+r*.42); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-r*.22, cy+r*.08); ctx.lineTo(cx+r*.22, cy+r*.08); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-r*.12, cy+r*.3); ctx.lineTo(cx+r*.12, cy+r*.3); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawIndustryIcon(cx, cy, r) {
+      drawBadgeBase(cx, cy, r);
+      drawLightning(cx, cy, r);
+      ctx.save();
+      ctx.strokeStyle = '#0d6f95';
+      ctx.fillStyle = '#0d6f95';
+      ctx.lineWidth = r * 0.055;
+      ctx.strokeRect(cx-r*.38, cy-r*.28, r*.76, r*.56);
+      for (let i=-2;i<=2;i++) {
+        ctx.beginPath(); ctx.moveTo(cx+i*r*.16, cy-r*.45); ctx.lineTo(cx+i*r*.16, cy-r*.28); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+i*r*.16, cy+r*.28); ctx.lineTo(cx+i*r*.16, cy+r*.45); ctx.stroke();
+      }
+      for (let i=-1;i<=1;i++) {
+        ctx.beginPath(); ctx.moveTo(cx-r*.55, cy+i*r*.17); ctx.lineTo(cx-r*.38, cy+i*r*.17); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+r*.38, cy+i*r*.17); ctx.lineTo(cx+r*.55, cy+i*r*.17); ctx.stroke();
+      }
+      ctx.fillRect(cx-r*.16, cy-r*.12, r*.32, r*.24);
+      ctx.restore();
+    }
+
+    function drawThemeIcon(cx, cy, r) {
+      let mode = iconModeInput.value;
+      if (mode === 'auto') mode = detectTheme();
+      if (mode === 'upload' && uploadedLogo) {
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(uploadedLogo, cx - r, cy - r, r * 2, r * 2);
+        ctx.restore();
+        return;
+      }
+      if (mode === 'drone') drawDroneIcon(cx, cy, r);
+      else if (mode === 'electric') drawElectricIcon(cx, cy, r);
+      else if (mode === 'industry') drawIndustryIcon(cx, cy, r);
+      else drawDefenseIcon(cx, cy, r);
+    }
+
+    function draw() {
+      setCanvasRatio();
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, w, h);
+
+      const margin = Math.min(w, h) * 0.07;
+      const cardX = margin;
+      const cardY = h * 0.16;
+      const cardW = w - margin * 2;
+      const cardH = h * 0.68;
+      const r = Math.min(w, h) * 0.06;
+
+      ctx.fillStyle = '#f7f7f4';
+      roundRect(cardX, cardY, cardW, cardH, r);
+      ctx.fill();
+
+      const isVertical = h > w;
+      const logoRadius = isVertical ? w * 0.18 : h * 0.19;
+      const logoCx = isVertical ? w / 2 : cardX + cardW * 0.17;
+      const logoCy = isVertical ? cardY + cardH * 0.23 : cardY + cardH * 0.5;
+      drawThemeIcon(logoCx, logoCy, logoRadius);
+
+      const textX = isVertical ? cardX + cardW * 0.1 : cardX + cardW * 0.32;
+      const textTop = isVertical ? cardY + cardH * 0.43 : cardY + cardH * 0.25;
+      const textW = isVertical ? cardW * 0.8 : cardW * 0.62;
+      const fontFamily = fontMap[fontStyleInput.value];
+
+      ctx.fillStyle = '#050505';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.font = `900 ${Number(titleSizeInput.value)}px ${fontFamily}`;
+      const titleLines = wrapText(titleInput.value, textX, textTop, textW, Number(titleSizeInput.value) * 1.18);
+
+      ctx.font = `900 ${Number(subSizeInput.value)}px Georgia, "Times New Roman", serif`;
+      const subY = textTop + titleLines * Number(titleSizeInput.value) * 1.18 + h * 0.035;
+      wrapText(subtitleInput.value.toUpperCase(), textX, subY, textW, Number(subSizeInput.value) * 1.25);
+    }
+
+    [titleInput, subtitleInput, ratioInput, iconModeInput, fontStyleInput, titleSizeInput, subSizeInput].forEach(el => {
+      el.addEventListener('input', draw);
+      el.addEventListener('change', draw);
+    });
+
+    uploadInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        uploadedLogo = new Image();
+        uploadedLogo.onload = () => { iconModeInput.value = 'upload'; draw(); };
+        uploadedLogo.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      draw();
+      const link = document.createElement('a');
+      link.download = 'slogan-image.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      titleInput.value = '支持 1.25 兆軍購';
+      subtitleInput.value = 'SUPPORT 1.25 TRILLION IN MILITARY PURCHASES';
+      iconModeInput.value = 'auto';
+      fontStyleInput.value = 'serif';
+      titleSizeInput.value = 92;
+      subSizeInput.value = 38;
+      uploadedLogo = null;
+      uploadInput.value = '';
+      draw();
+    });
+
+    draw();
+  </script>
+</body>
+</html>
