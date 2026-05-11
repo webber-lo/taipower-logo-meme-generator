@@ -117,70 +117,34 @@
   <main class="app">
     <section class="panel">
       <h1>台電 LOGO 迷因產生器</h1>
-      <p class="hint">做出左側台電迷因圈、紅色電力圖、右側大字標語的仿公部門宣導圖。按隨機可以直接抽一組不太正經的標語。</p>
+      <p class="hint">輸入一句中文，其他全部自動：紅黑分段、英文副標、徽章主題、台電迷因圈和電力閃電都會直接產生。</p>
 
-      <label>中文主標</label>
-      <textarea id="title">停電不是問題 冷氣才是信仰</textarea>
+      <label>輸入中文迷因</label>
+      <textarea id="title" placeholder="例如：電來了但我的耐心沒來">停電不是問題 冷氣才是信仰</textarea>
 
-      <label>英文副標</label>
-      <textarea id="subtitle">POWER MAY FLICKER. THE AC MUST REMAIN.</textarea>
-
-      <div class="row">
-        <div>
-          <label>版型比例</label>
-          <select id="ratio">
-            <option value="wide">寬版宣導圖</option>
-            <option value="16:9">16:9 橫式</option>
-            <option value="1:1">1:1 方形</option>
-            <option value="9:16">9:16 直式</option>
-          </select>
-        </div>
-        <div>
-          <label>徽章主題</label>
-          <select id="iconMode">
-            <option value="auto">依文字自動判斷</option>
-            <option value="plug">插頭鼠</option>
-            <option value="drone">軍購無人機</option>
-            <option value="ac">冷氣信仰</option>
-            <option value="bill">帳單爆擊</option>
-            <option value="upload">使用上傳圖片</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>黑字前段</label>
-          <input id="blackPart" value="停電不是問題" />
-        </div>
-        <div>
-          <label>紅字後段</label>
-          <input id="redPart" value="冷氣才是信仰" />
-        </div>
-      </div>
-
-      <label>外圈文字</label>
-      <input id="ringText" value="台電迷因圈 POWER MEME UNIT" />
-
-      <div class="row">
-        <div>
-          <label>主字大小</label>
-          <input id="titleSize" type="number" value="86" min="38" max="150" />
-        </div>
-        <div>
-          <label>英文大小</label>
-          <input id="subSize" type="number" value="32" min="18" max="70" />
-        </div>
-      </div>
-
-      <label>自訂徽章中心圖片（可不選）</label>
-      <input id="logoUpload" type="file" accept="image/*" />
+      <input id="subtitle" type="hidden" value="POWER MAY FLICKER. THE AC MUST REMAIN." />
+      <input id="blackPart" type="hidden" value="停電不是問題" />
+      <input id="redPart" type="hidden" value="冷氣才是信仰" />
+      <input id="ringText" type="hidden" value="台電迷因圈 POWER MEME UNIT" />
+      <input id="titleSize" type="hidden" value="86" />
+      <input id="subSize" type="hidden" value="32" />
+      <select id="ratio" hidden>
+        <option value="wide" selected>寬版宣導圖</option>
+      </select>
+      <select id="iconMode" hidden>
+        <option value="auto" selected>依文字自動判斷</option>
+        <option value="plug">插頭鼠</option>
+        <option value="drone">軍購無人機</option>
+        <option value="ac">冷氣信仰</option>
+        <option value="bill">帳單爆擊</option>
+      </select>
+      <input id="logoUpload" type="file" accept="image/*" hidden />
 
       <button id="randomBtn">隨機迷因</button>
       <button id="downloadBtn">下載 PNG</button>
-      <button class="secondary" id="resetBtn">恢復範例</button>
+      <button class="secondary" id="resetBtn">清空重打</button>
 
-      <p class="note">這是戲仿迷因工具，不代表任何公司或機關。公開分享時，靠大家的幽默感自律。</p>
+      <p class="note">公開網頁版已簡化成一鍵玩法。這是戲仿迷因工具，不代表任何公司或機關。</p>
     </section>
 
     <section class="preview-wrap">
@@ -253,6 +217,34 @@
       }
     ];
 
+    const englishTemplates = {
+      ac: [
+        'POWER MAY FLICKER. THE AC MUST REMAIN.',
+        'GRID STATUS UNCLEAR. AIR CONDITIONING FAITH UNBROKEN.',
+        'SAVE ELECTRICITY, BUT DO NOT TEST MY SUMMER.'
+      ],
+      bill: [
+        'THE BILL HAS ARRIVED. EMOTIONAL DAMAGE IS CONFIRMED.',
+        'PAYMENT DUE. INNER PEACE OVERDUE.',
+        'PLEASE REMAIN CALM WHILE YOUR WALLET REBOOTS.'
+      ],
+      drone: [
+        'ACTION CAN WAIT? THE BUDGET CANNOT.',
+        'SUPPORT THE PLAN. QUESTION THE RECEIPT.',
+        'NATIONAL DEFENSE, PERSONAL CONFUSION.'
+      ],
+      plug: [
+        'ACT NOW. THE PLUG HAS SEEN TOO MUCH.',
+        'ELECTRICAL SAFETY IS EVERYONE’S RESPONSIBILITY.',
+        'PLEASE SECURE THE CABLE BEFORE IT BECOMES A STORY.'
+      ],
+      default: [
+        'PUBLIC NOTICE: PLEASE REMAIN EMOTIONALLY GROUNDED.',
+        'ACTION CANNOT WAIT. COMMON SENSE ALSO CANNOT WAIT.',
+        'A CLEAN GRID BEGINS WITH A CONFUSED CITIZEN.'
+      ]
+    };
+
     function setCanvasRatio() {
       const ratio = ratioInput.value;
       if (ratio === 'wide') { canvas.width = 1800; canvas.height = 900; }
@@ -262,12 +254,66 @@
     }
 
     function detectTheme() {
-      const text = `${titleInput.value} ${subtitleInput.value}`.toLowerCase();
+      const text = titleInput.value.toLowerCase();
       if (text.includes('軍購') || text.includes('國防') || text.includes('drone') || text.includes('military')) return 'drone';
       if (text.includes('冷氣') || text.includes('ac') || text.includes('air')) return 'ac';
-      if (text.includes('電費') || text.includes('帳單') || text.includes('bill')) return 'bill';
-      if (text.includes('鼠') || text.includes('rodent') || text.includes('plug')) return 'plug';
+      if (text.includes('電費') || text.includes('帳單') || text.includes('薪水') || text.includes('錢') || text.includes('bill')) return 'bill';
+      if (text.includes('鼠') || text.includes('插頭') || text.includes('延長線') || text.includes('電線') || text.includes('rodent') || text.includes('plug')) return 'plug';
       return 'plug';
+    }
+
+    function hashText(text) {
+      let hash = 0;
+      for (const char of text) hash = ((hash << 5) - hash + char.charCodeAt(0)) | 0;
+      return Math.abs(hash);
+    }
+
+    function splitChineseLine(text) {
+      const clean = text.replace(/\s+/g, ' ').trim() || '停電不是問題 冷氣才是信仰';
+      const separators = ['，', '。', '！', '？', ',', '.', '!', '?', '；', ';', '、'];
+      for (const sep of separators) {
+        const index = clean.indexOf(sep);
+        if (index > 1 && index < clean.length - 1) {
+          return [clean.slice(0, index).trim(), clean.slice(index + 1).trim()];
+        }
+      }
+      const compact = clean.replace(/\s+/g, '');
+      const pivots = ['刻不容緩', '不是問題', '你我有責', '全面失守', '守護台灣', '才是信仰', '先不要'];
+      for (const pivot of pivots) {
+        const index = compact.indexOf(pivot);
+        if (index > 0 && index + pivot.length < compact.length) {
+          return [compact.slice(0, index + pivot.length), compact.slice(index + pivot.length)];
+        }
+      }
+      const midpoint = Math.ceil(compact.length / 2);
+      return [compact.slice(0, midpoint), compact.slice(midpoint)];
+    }
+
+    function autoSubtitle(text, theme) {
+      const bank = englishTemplates[theme] || englishTemplates.default;
+      return bank[hashText(text) % bank.length];
+    }
+
+    function autoTitleSize(text) {
+      const length = text.replace(/\s+/g, '').length;
+      if (length <= 12) return 94;
+      if (length <= 18) return 84;
+      if (length <= 26) return 72;
+      return 60;
+    }
+
+    function autoGenerateFromTitle() {
+      const text = titleInput.value.trim() || '停電不是問題 冷氣才是信仰';
+      const [blackPart, redPart] = splitChineseLine(text);
+      const theme = detectTheme();
+      blackPartInput.value = blackPart;
+      redPartInput.value = redPart || '刻不容緩';
+      subtitleInput.value = autoSubtitle(text, theme);
+      iconModeInput.value = theme;
+      ratioInput.value = 'wide';
+      ringTextInput.value = '台電迷因圈 POWER MEME UNIT';
+      titleSizeInput.value = autoTitleSize(text);
+      subSizeInput.value = text.length > 22 ? 28 : 32;
     }
 
     function roundRect(x, y, w, h, r) {
@@ -579,6 +625,7 @@
     }
 
     function draw() {
+      autoGenerateFromTitle();
       setCanvasRatio();
       const w = canvas.width;
       const h = canvas.height;
@@ -600,10 +647,12 @@
       redPartInput.value = preset.redPart;
       subtitleInput.value = preset.subtitle;
       iconModeInput.value = preset.icon;
+      titleSizeInput.value = autoTitleSize(preset.title);
       draw();
     }
 
-    [titleInput, subtitleInput, ratioInput, iconModeInput, ringTextInput, titleSizeInput, subSizeInput].forEach(el => {
+    titleInput.addEventListener('input', draw);
+    [subtitleInput, ratioInput, iconModeInput, ringTextInput, titleSizeInput, subSizeInput].forEach(el => {
       el.addEventListener('input', draw);
       el.addEventListener('change', draw);
     });
@@ -642,13 +691,11 @@
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
-      ratioInput.value = 'wide';
-      ringTextInput.value = '台電迷因圈 POWER MEME UNIT';
-      titleSizeInput.value = 86;
-      subSizeInput.value = 32;
+      titleInput.value = '';
       uploadedLogo = null;
       uploadInput.value = '';
-      applyPreset(presets[0]);
+      draw();
+      titleInput.focus();
     });
 
     draw();
