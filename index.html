@@ -575,7 +575,7 @@
       else drawPlugMouse(cx, cy, r * .70);
     }
 
-    function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1) {
+    function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1, align = 'left') {
       const fontFamily = '"Noto Sans TC", "Microsoft JhengHei", "Arial Black", sans-serif';
       let fontSize = size;
       const chunks = text.trim().split(/\s+/);
@@ -608,9 +608,10 @@
       }
       ctx.fillStyle = color;
       ctx.font = `900 ${fontSize}px ${fontFamily}`;
-      ctx.textAlign = 'left';
+      ctx.textAlign = align;
       ctx.textBaseline = 'top';
-      lines.slice(0, maxLines).forEach((line, index) => ctx.fillText(line, x, y + index * fontSize * 1.08));
+      const drawX = align === 'center' ? x + maxWidth / 2 : x;
+      lines.slice(0, maxLines).forEach((line, index) => ctx.fillText(line, drawX, y + index * fontSize * 1.08));
       return { fontSize, lineCount: Math.min(lines.length, maxLines), height: Math.min(lines.length, maxLines) * fontSize * 1.08 };
     }
 
@@ -634,11 +635,30 @@
       const blackPart = blackPartInput.value || titleInput.value;
       const redPart = redPartInput.value;
 
-      const blackResult = drawFitText(blackPart, textX, textY, textW * 0.52, titleSize, black, 1);
-      const redX = textX + Math.min(ctx.measureText(blackPart).width + titleSize * .28, textW * 0.55);
-      drawFitText(redPart, redX, textY, textW - (redX - textX), titleSize, red, 1);
+      const titleFont = `"Noto Sans TC", "Microsoft JhengHei", "Arial Black", sans-serif`;
+      let titleFontSize = titleSize;
+      ctx.font = `900 ${titleFontSize}px ${titleFont}`;
+      let blackWidth = ctx.measureText(blackPart).width;
+      let redWidth = ctx.measureText(redPart).width;
+      let gap = titleFontSize * 0.28;
+      while (blackWidth + redWidth + gap > textW && titleFontSize > 22) {
+        titleFontSize -= 2;
+        gap = titleFontSize * 0.28;
+        ctx.font = `900 ${titleFontSize}px ${titleFont}`;
+        blackWidth = ctx.measureText(blackPart).width;
+        redWidth = ctx.measureText(redPart).width;
+      }
+      const totalTitleW = blackWidth + redWidth + gap;
+      const groupX = textX + (textW - totalTitleW) / 2;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.font = `900 ${titleFontSize}px ${titleFont}`;
+      ctx.fillStyle = black;
+      ctx.fillText(blackPart, groupX, textY);
+      ctx.fillStyle = red;
+      ctx.fillText(redPart, groupX + blackWidth + gap, textY);
 
-      const lineY = textY + blackResult.fontSize * 1.17;
+      const lineY = textY + titleFontSize * 1.17;
       ctx.strokeStyle = ink;
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -646,7 +666,7 @@
       ctx.lineTo(textX + textW, lineY);
       ctx.stroke();
 
-      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 1);
+      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 1, 'center');
       drawBolt(w * 0.94, h * 0.50, h * 0.18, 0.16);
     }
 
@@ -661,8 +681,8 @@
       const textW = w * 0.78;
       const titleSize = Number(titleSizeInput.value);
 
-      const blackResult = drawFitText(blackPartInput.value || titleInput.value, textX, textY, textW, titleSize, black, 2);
-      drawFitText(redPartInput.value, textX, textY + blackResult.height + h * 0.018, textW, titleSize, red, 2);
+      const blackResult = drawFitText(blackPartInput.value || titleInput.value, textX, textY, textW, titleSize, black, 2, 'center');
+      drawFitText(redPartInput.value, textX, textY + blackResult.height + h * 0.018, textW, titleSize, red, 2, 'center');
 
       const lineY = textY + blackResult.height + titleSize * 1.22;
       ctx.strokeStyle = ink;
@@ -671,7 +691,7 @@
       ctx.moveTo(textX, lineY);
       ctx.lineTo(textX + textW, lineY);
       ctx.stroke();
-      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 3);
+      drawFitText(subtitleInput.value.toUpperCase(), textX, lineY + h * 0.025, textW, Number(subSizeInput.value), ink, 3, 'center');
       drawBolt(w * 0.86, h * 0.88, Math.min(w, h) * 0.12, 0.2);
     }
 
