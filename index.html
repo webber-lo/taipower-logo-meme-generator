@@ -137,6 +137,10 @@
         <option value="drone">軍購無人機</option>
         <option value="ac">冷氣信仰</option>
         <option value="bill">帳單爆擊</option>
+        <option value="outage">停電蠟燭</option>
+        <option value="tower">電塔供電</option>
+        <option value="fridge">冰箱節電</option>
+        <option value="mood">情緒維修</option>
       </select>
       <input id="logoUpload" type="file" accept="image/*" hidden />
 
@@ -229,6 +233,26 @@
         'PAYMENT DUE. INNER PEACE OVERDUE.',
         'PLEASE REMAIN CALM WHILE YOUR WALLET REBOOTS.'
       ],
+      outage: [
+        'POWER OUTAGE REPORTED. PATIENCE NOT FOUND.',
+        'LIGHTS OUT. DRAMA ON.',
+        'SERVICE INTERRUPTION. HUMANITY UNDER REVIEW.'
+      ],
+      tower: [
+        'GRID STABILITY IS A GROUP PROJECT.',
+        'TRANSMISSION ACTIVE. CONFIDENCE PENDING.',
+        'KEEP THE GRID STRONG AND THE COMMENTS STRONGER.'
+      ],
+      fridge: [
+        'PLEASE CLOSE THE FRIDGE BEFORE BLAMING THE GRID.',
+        'COLD AIR IS NOT A PUBLIC UTILITY.',
+        'THE FRIDGE DOOR HAS BEEN OPEN TOO LONG.'
+      ],
+      mood: [
+        'POWER RESTORED. INNER PEACE STILL UNDER MAINTENANCE.',
+        'EMOTIONAL GRID FAILURE DETECTED.',
+        'PLEASE WAIT WHILE YOUR PATIENCE RECONNECTS.'
+      ],
       drone: [
         'ACTION CAN WAIT? THE BUDGET CANNOT.',
         'SUPPORT THE PLAN. QUESTION THE RECEIPT.',
@@ -258,9 +282,13 @@
       const text = titleInput.value.toLowerCase();
       if (text.includes('軍購') || text.includes('國防') || text.includes('drone') || text.includes('military')) return 'drone';
       if (text.includes('冷氣') || text.includes('ac') || text.includes('air')) return 'ac';
+      if (text.includes('停電') || text.includes('斷電') || text.includes('跳電') || text.includes('沒電') || text.includes('限電')) return 'outage';
+      if (text.includes('電塔') || text.includes('供電') || text.includes('電網') || text.includes('電力') || text.includes('發電')) return 'tower';
+      if (text.includes('冰箱') || text.includes('冰櫃') || text.includes('門關') || text.includes('省電')) return 'fridge';
+      if (text.includes('情緒') || text.includes('耐心') || text.includes('崩潰') || text.includes('心累') || text.includes('修復')) return 'mood';
       if (text.includes('電費') || text.includes('帳單') || text.includes('薪水') || text.includes('錢') || text.includes('bill')) return 'bill';
       if (text.includes('鼠') || text.includes('插頭') || text.includes('延長線') || text.includes('電線') || text.includes('rodent') || text.includes('plug')) return 'plug';
-      return 'plug';
+      return ['plug', 'outage', 'tower', 'bill', 'mood'][hashText(text || '台電迷因') % 5];
     }
 
     function hashText(text) {
@@ -555,6 +583,106 @@
       ctx.restore();
     }
 
+    function drawOutage(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .22, cy + r * .45);
+      ctx.lineTo(cx + r * .22, cy + r * .45);
+      ctx.lineTo(cx + r * .14, cy - r * .08);
+      ctx.lineTo(cx - r * .14, cy - r * .08);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r * .52);
+      ctx.bezierCurveTo(cx + r * .21, cy - r * .30, cx + r * .16, cy - r * .12, cx, cy - r * .06);
+      ctx.bezierCurveTo(cx - r * .18, cy - r * .16, cx - r * .15, cy - r * .36, cx, cy - r * .52);
+      ctx.fill();
+      ctx.lineWidth = r * 0.032;
+      ctx.beginPath();
+      ctx.arc(cx, cy + r * .50, r * .25, Math.PI, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawTower(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r * .55);
+      ctx.lineTo(cx - r * .34, cy + r * .50);
+      ctx.moveTo(cx, cy - r * .55);
+      ctx.lineTo(cx + r * .34, cy + r * .50);
+      ctx.moveTo(cx - r * .24, cy - r * .22);
+      ctx.lineTo(cx + r * .24, cy - r * .22);
+      ctx.moveTo(cx - r * .30, cy + r * .10);
+      ctx.lineTo(cx + r * .30, cy + r * .10);
+      ctx.moveTo(cx - r * .18, cy + r * .34);
+      ctx.lineTo(cx + r * .18, cy + r * .34);
+      ctx.moveTo(cx - r * .48, cy - r * .22);
+      ctx.lineTo(cx + r * .48, cy - r * .22);
+      ctx.moveTo(cx - r * .58, cy - r * .36);
+      ctx.lineTo(cx - r * .48, cy - r * .22);
+      ctx.moveTo(cx + r * .58, cy - r * .36);
+      ctx.lineTo(cx + r * .48, cy - r * .22);
+      ctx.stroke();
+      drawBolt(cx + r * .02, cy + r * .03, r * .23, 0.15);
+      ctx.restore();
+    }
+
+    function drawFridge(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      roundRect(cx - r * .28, cy - r * .50, r * .56, r * .95, r * .05);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .28, cy - r * .12);
+      ctx.lineTo(cx + r * .28, cy - r * .12);
+      ctx.stroke();
+      ctx.fillRect(cx + r * .13, cy - r * .38, r * .05, r * .18);
+      ctx.fillRect(cx + r * .13, cy + r * .03, r * .05, r * .20);
+      ctx.lineWidth = r * 0.030;
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .46, cy - r * .18);
+      ctx.bezierCurveTo(cx - r * .66, cy - r * .05, cx - r * .60, cy + r * .18, cx - r * .43, cy + r * .28);
+      ctx.moveTo(cx + r * .43, cy - r * .18);
+      ctx.bezierCurveTo(cx + r * .62, cy - r * .04, cx + r * .58, cy + r * .17, cx + r * .42, cy + r * .28);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawMood(cx, cy, r) {
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.fillStyle = ink;
+      ctx.lineWidth = r * 0.045;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * .42, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx - r * .15, cy - r * .10, r * .035, 0, Math.PI * 2);
+      ctx.arc(cx + r * .15, cy - r * .10, r * .035, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy + r * .22, r * .18, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx - r * .45, cy - r * .42);
+      ctx.lineTo(cx - r * .28, cy - r * .60);
+      ctx.moveTo(cx + r * .45, cy - r * .42);
+      ctx.lineTo(cx + r * .28, cy - r * .60);
+      ctx.stroke();
+      drawBolt(cx + r * .45, cy + r * .35, r * .22, 0.2);
+      ctx.restore();
+    }
+
     function drawUploaded(cx, cy, r) {
       ctx.save();
       ctx.beginPath();
@@ -567,11 +695,14 @@
     function drawThemeIcon(cx, cy, r) {
       drawBadgeBase(cx, cy, r);
       drawPowerBolts(cx, cy, r);
-      let mode = iconModeInput.value;
-      if (mode === 'auto') mode = detectTheme();
+      const mode = detectTheme();
       if (mode === 'drone') drawDrone(cx, cy, r * .70);
       else if (mode === 'ac') drawAC(cx, cy, r * .70);
       else if (mode === 'bill') drawBill(cx, cy, r * .70);
+      else if (mode === 'outage') drawOutage(cx, cy, r * .70);
+      else if (mode === 'tower') drawTower(cx, cy, r * .70);
+      else if (mode === 'fridge') drawFridge(cx, cy, r * .70);
+      else if (mode === 'mood') drawMood(cx, cy, r * .70);
       else drawPlugMouse(cx, cy, r * .70);
     }
 
