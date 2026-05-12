@@ -117,10 +117,10 @@
   <main class="app">
     <section class="panel">
       <h1>台電 LOGO 迷因產生器</h1>
-      <p class="hint">輸入一句中文，其他全部自動：紅黑分段、英文副標、徽章主題、台電迷因圈和電力閃電都會直接產生。</p>
+      <p class="hint">輸入一句中文，其他全部自動。用空白、換行或標點斷句，前段會變黑字，後段會變紅字。</p>
 
       <label>輸入中文迷因</label>
-      <textarea id="title" placeholder="例如：電來了但我的耐心沒來">停電不是問題 冷氣才是信仰</textarea>
+      <textarea id="title" placeholder="例如：電來了但我的耐心沒來，情緒修復刻不容緩">停電不是問題 冷氣才是信仰</textarea>
 
       <input id="subtitle" type="hidden" value="POWER MAY FLICKER. THE AC MUST REMAIN." />
       <input id="blackPart" type="hidden" value="停電不是問題" />
@@ -269,14 +269,16 @@
     }
 
     function splitChineseLine(text) {
-      const clean = text.replace(/\s+/g, ' ').trim() || '停電不是問題 冷氣才是信仰';
-      const separators = ['，', '。', '！', '？', ',', '.', '!', '?', '；', ';', '、'];
-      for (const sep of separators) {
-        const index = clean.indexOf(sep);
-        if (index > 1 && index < clean.length - 1) {
-          return [clean.slice(0, index).trim(), clean.slice(index + 1).trim()];
-        }
+      const clean = text.trim() || '停電不是問題 冷氣才是信仰';
+      const explicitParts = clean
+        .split(/[\s，。！？、；：,.!?;:]+/)
+        .map(part => part.trim())
+        .filter(Boolean);
+
+      if (explicitParts.length >= 2) {
+        return [explicitParts[0], explicitParts.slice(1).join(' ')];
       }
+
       const compact = clean.replace(/\s+/g, '');
       const pivots = ['刻不容緩', '不是問題', '你我有責', '全面失守', '守護台灣', '才是信仰', '先不要'];
       for (const pivot of pivots) {
