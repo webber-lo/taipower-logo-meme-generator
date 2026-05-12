@@ -142,13 +142,14 @@
         <option value="fridge">冰箱節電</option>
         <option value="mood">情緒維修</option>
       </select>
-      <input id="logoUpload" type="file" accept="image/*" hidden />
+      <label>上傳中心圖片（可選）</label>
+      <input id="logoUpload" type="file" accept="image/*" />
 
       <button id="randomBtn">隨機迷因</button>
       <button id="downloadBtn">下載 PNG</button>
       <button class="secondary" id="resetBtn">清空重打</button>
 
-      <p class="note">公開網頁版已簡化成一鍵玩法。這是戲仿迷因工具，不代表任何公司或機關。</p>
+      <p class="note">上傳圖片只會放在徽章中央，外圍圓圈和紅色電力閃電會保留在最上層。這是戲仿迷因工具，不代表任何公司或機關。</p>
     </section>
 
     <section class="preview-wrap">
@@ -686,17 +687,16 @@
     function drawUploaded(cx, cy, r) {
       ctx.save();
       ctx.beginPath();
-      ctx.arc(cx, cy, r * .60, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r * .54, 0, Math.PI * 2);
       ctx.clip();
-      ctx.drawImage(uploadedLogo, cx - r * .60, cy - r * .60, r * 1.2, r * 1.2);
+      ctx.drawImage(uploadedLogo, cx - r * .54, cy - r * .54, r * 1.08, r * 1.08);
       ctx.restore();
     }
 
     function drawThemeIcon(cx, cy, r) {
-      drawBadgeBase(cx, cy, r);
-      drawPowerBolts(cx, cy, r);
       const mode = detectTheme();
-      if (mode === 'drone') drawDrone(cx, cy, r * .70);
+      if (uploadedLogo) drawUploaded(cx, cy, r);
+      else if (mode === 'drone') drawDrone(cx, cy, r * .70);
       else if (mode === 'ac') drawAC(cx, cy, r * .70);
       else if (mode === 'bill') drawBill(cx, cy, r * .70);
       else if (mode === 'outage') drawOutage(cx, cy, r * .70);
@@ -704,6 +704,8 @@
       else if (mode === 'fridge') drawFridge(cx, cy, r * .70);
       else if (mode === 'mood') drawMood(cx, cy, r * .70);
       else drawPlugMouse(cx, cy, r * .70);
+      drawBadgeBase(cx, cy, r);
+      drawPowerBolts(cx, cy, r);
     }
 
     function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1, align = 'left') {
