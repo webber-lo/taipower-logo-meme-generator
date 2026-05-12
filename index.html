@@ -168,6 +168,7 @@
     let uploadedLogo = null;
 
     const ink = '#06265d';
+    const logoInk = '#0b7f98';
     const red = '#b00012';
     const black = '#211816';
     const paper = '#fbfaf7';
@@ -372,29 +373,78 @@
 
     function drawBadgeBase(cx, cy, radius) {
       ctx.save();
-      ctx.strokeStyle = ink;
-      ctx.lineWidth = radius * 0.022;
-      for (let i = 0; i < 4; i++) {
+      ctx.strokeStyle = logoInk;
+      ctx.lineWidth = radius * 0.025;
+      for (let i = 0; i < 3; i++) {
         ctx.beginPath();
-        ctx.arc(cx, cy, radius - i * radius * 0.045, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius - i * radius * 0.065, 0, Math.PI * 2);
         ctx.stroke();
       }
-      ctx.lineWidth = radius * 0.011;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 0.68, 0, Math.PI * 2);
-      ctx.stroke();
-      drawRingText(cx, cy, radius, ringTextInput.value || '台電迷因圈 POWER MEME UNIT');
       ctx.restore();
     }
 
     function drawPowerBolts(cx, cy, radius) {
       const bolts = [
-        [-0.58, -0.22, -0.55],
-        [0.60, -0.12, 0.38],
-        [-0.34, 0.55, -0.95],
-        [0.35, 0.54, 0.62]
+        [-0.55, -0.28, 0.72],
+        [0.55, -0.28, -0.72],
+        [-0.55, 0.28, 2.42],
+        [0.55, 0.28, -2.42]
       ];
-      bolts.forEach(([dx, dy, angle]) => drawBolt(cx + dx * radius, cy + dy * radius, radius * 0.30, angle));
+      bolts.forEach(([dx, dy, angle]) => drawBolt(cx + dx * radius, cy + dy * radius, radius * 0.29, angle));
+    }
+
+    function drawTaipowerMark(cx, cy, r) {
+      const teal = logoInk;
+      ctx.save();
+      ctx.strokeStyle = teal;
+      ctx.fillStyle = teal;
+      ctx.lineCap = 'square';
+      ctx.lineJoin = 'miter';
+
+      ctx.lineWidth = r * 0.045;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r * 0.58);
+      ctx.lineTo(cx + r * 0.30, cy - r * 0.18);
+      ctx.lineTo(cx + r * 0.13, cy - r * 0.18);
+      ctx.lineTo(cx + r * 0.30, cy + r * 0.12);
+      ctx.lineTo(cx + r * 0.10, cy + r * 0.12);
+      ctx.lineTo(cx + r * 0.28, cy + r * 0.55);
+      ctx.lineTo(cx, cy + r * 0.27);
+      ctx.lineTo(cx - r * 0.28, cy + r * 0.55);
+      ctx.lineTo(cx - r * 0.10, cy + r * 0.12);
+      ctx.lineTo(cx - r * 0.30, cy + r * 0.12);
+      ctx.lineTo(cx - r * 0.13, cy - r * 0.18);
+      ctx.lineTo(cx - r * 0.30, cy - r * 0.18);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.lineWidth = r * 0.052;
+      const bars = [
+        [-0.34, 0.34, -0.31],
+        [-0.25, 0.25, -0.14],
+        [-0.34, 0.34, 0.03],
+        [-0.25, 0.25, 0.20]
+      ];
+      bars.forEach(([left, right, y]) => {
+        ctx.beginPath();
+        ctx.moveTo(cx + r * left, cy + r * y);
+        ctx.lineTo(cx + r * right, cy + r * y);
+        ctx.stroke();
+      });
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r * 0.48);
+      ctx.lineTo(cx, cy + r * 0.43);
+      ctx.stroke();
+
+      ctx.lineWidth = r * 0.040;
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.13, cy - r * 0.43);
+      ctx.lineTo(cx + r * 0.13, cy - r * 0.43);
+      ctx.moveTo(cx - r * 0.20, cy - r * 0.30);
+      ctx.lineTo(cx + r * 0.20, cy - r * 0.30);
+      ctx.stroke();
+      ctx.restore();
     }
 
     function drawPlugMouse(cx, cy, r) {
@@ -517,13 +567,7 @@
     function drawThemeIcon(cx, cy, r) {
       drawBadgeBase(cx, cy, r);
       drawPowerBolts(cx, cy, r);
-      let mode = iconModeInput.value;
-      if (mode === 'auto') mode = detectTheme();
-      if (mode === 'upload' && uploadedLogo) drawUploaded(cx, cy, r);
-      else if (mode === 'drone') drawDrone(cx, cy, r * .78);
-      else if (mode === 'ac') drawAC(cx, cy, r * .78);
-      else if (mode === 'bill') drawBill(cx, cy, r * .78);
-      else drawPlugMouse(cx, cy, r * .78);
+      drawTaipowerMark(cx, cy, r * 0.78);
     }
 
     function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1) {
