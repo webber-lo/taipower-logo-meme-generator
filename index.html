@@ -567,7 +567,12 @@
     function drawThemeIcon(cx, cy, r) {
       drawBadgeBase(cx, cy, r);
       drawPowerBolts(cx, cy, r);
-      drawTaipowerMark(cx, cy, r * 0.78);
+      let mode = iconModeInput.value;
+      if (mode === 'auto') mode = detectTheme();
+      if (mode === 'drone') drawDrone(cx, cy, r * .70);
+      else if (mode === 'ac') drawAC(cx, cy, r * .70);
+      else if (mode === 'bill') drawBill(cx, cy, r * .70);
+      else drawPlugMouse(cx, cy, r * .70);
     }
 
     function drawFitText(text, x, y, maxWidth, size, color, maxLines = 1) {
